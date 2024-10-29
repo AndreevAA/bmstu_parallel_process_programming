@@ -53,6 +53,8 @@ int main(int argc, char **argv) {
         return 1; // Завершение программы
     }
 
+    int i;
+
     // Процесс с рангом 1 выделяет память и инициализирует буфер
     if (myrank == 1) {
         buf = (int*)malloc(sizeof(int) * (SIZE * nprocs)); // Выделение памяти под массив

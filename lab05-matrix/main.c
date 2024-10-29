@@ -1,84 +1,117 @@
-#include <stdio.h>          
-#include <mpi.h>            
+#include <stdio.h>
+#include <mpi.h>
 
-int main(int argc, char **argv)
-{
-    int myrank, nprocs, nlen;            // Объявление переменных: myrank (номер процесса), nprocs (количество процессов), nlen (длина имени процессора)
-    char name[MPI_MAX_PROCESSOR_NAME];   // Массив для хранения имени процессора
+int main(int argc, char ** argv) {
+    int myrank, nprocs, len;
+    char name[MPI_MAX_PROCESSOR_NAME];
 
-    MPI_Init(&argc, &argv);              // Инициализация MPI
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+    MPI_Get_processor_name(name, &len);
 
-    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);  // Получение общего количества процессов
-    MPI_Comm_rank(MPI_COMM_WORLD, &myrank);  // Получение ранга текущего процесса
-    MPI_Get_processor_name(name, &nlen);      // Получение имени процессора
+    printf("Hello from processor %s[%d] %d of %d\n", name, len, myrank, nprocs);
 
-    printf("Hello from host %s[%d] %d of %d\n", name, nlen, myrank, nprocs);
+    // для чётных процессов
+    // они отправляют сообщения
+    if (myrank % 2 == 0) {
+        // в случае если существует следующий процесс
+        // т.е общее кол-во процессов не превышено
+        if (myrank + 1 < nprocs) {
+            int matrix[5][5]; // массив, который будем отправлять
+            int *b = matrix[0]; // указатель на 1-ый эл-т массива
 
-    // Если ранг процесса четный
-    if (myrank % 2 == 0)
-    {
-        // Если следующий процесс существует (проверка на границу)
-        if (myrank + 1 < nprocs)
-        {
-            int a[10][10];            
-            int *b = a[0];            
+            // заполняем двумерный массив с использованием указателя
+            for (int i = 0; i < 25; i++) {
+                *(b++) = i + 1;
+            }
 
-            // Заполнение массива значениями от 0 до 99
-            for (int i = 0; i < 100; i++)
-                *(b++) = i;
+            // отправляем массив matrix следующему процессу
 
-            MPI_Send(a, 100, MPI_INT, myrank + 1, 20, MPI_COMM_WORLD);
+            // matrix -- указатель на отправляемые данные
+            // 25 -- кол-во отправляемых эл-тов
+            // MPI_INT -- тип отправляемых данных
+            // myrank + 1 -- ранг процесса, которому отправляем сообщения
+            // 10 -- тег для идентификации отправляемых сообщений
+            // MPI_COMM_WORLD -- коммуникатор, определяющий группу процессов, которые могут общаться друг с другом
+            // (в данном случае используем "всемирный" коммуникатор, включающий все потоки, запущенные в рамках программы)
+            MPI_Send(matrix, 25, MPI_INT, myrank + 1, 10, MPI_COMM_WORLD);
+            printf("procs[%d] sent such matrix to procs[%d]:\n", myrank, myrank + 1);
+
+            // выводим отправленный массив на экран
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 5; j++) {
+                    printf("%4d", matrix[i][j]);
+                }
+                printf("\n");
+            }
+            printf("\n");
         }
-    }
-    else // Если ранг процесса нечетный
-    {
-        int a[10][10];                // Объявление массива для получения данных
+    // для нечётных процессов
+    // они получают сообщения
+    } else {
+        int matrix[5][5]; // массив для получения данных
 
-        MPI_Status st;                
-        MPI_Datatype col, col1;       
-        MPI_Aint adr[2];              // Массив для хранения смещений
-        MPI_Datatype tp[2];           
-        int len[2];                   
+        MPI_Status st; // статус операции получения сообщения
+        MPI_Datatype vectorType, structType; // переменные для определения пользовательских типов данных
 
-        // Создание векторного типа для извлечения столбцов
-        MPI_Type_vector(10, 1, 10, MPI_INT, &col);
-        MPI_Type_commit(&col);        // Подтверждение определения типа
+        MPI_Aint address[2]; // массив для хранения адресов полей пользовательского типа данных
+        MPI_Datatype newType[2]; // массив для хранения типов данных для создаваемого пользовательского типа
+        int fieldsLen[2]; // массив для хранения длин соответствующих полей пользовательского типа данных
 
-        // Определение смещений
-        adr[0] = 0;                    // Смещение для первого элемента
-        adr[1] = sizeof(int);         // Смещение для второго типа (не используется верхняя граница)
+        // определение пользовательского MPI типа vectorType
+        // это столбец из 5 целых чисел, взятых с шагом 5
 
-        tp[0] = col;                  // Первый тип - это столбец
-        tp[1] = MPI_INT;              // Второй тип - целое число
+        // 5 -- кол-во эл-тов
+        // 1 -- кол-во эл-тов в каждом "срезе"
+        // 5 -- шаг между эл-тами (т.е. каждый эл-т сдвигается на 5 позиций в памяти)
+        // MPI_INT -- базовый тип данных (здесь это целое число)
+        MPI_Type_vector(5, 1, 5, MPI_INT, &vectorType);
 
-        len[0] = 10;                  // Количество элементов в первом типе
-        len[1] = 1;                   // Количество элементов (1) для второго типа
+        // адреса для создания структуры
+        address[0] = 0; // начало 1-ого поля
+        address[1] = sizeof(int); // начало 2-ого поля (равно размеру целого числа)
 
-        // Создание производного типа данных с помощью MPI_Type_create_struct
-        MPI_Type_create_struct(2, len, adr, tp, &col1);
-        MPI_Type_commit(&col1);      // Подтверждение нового типа данных
+        // 1-ый эл-т структуры -- созданный пользовательский тип
+        // 2-ой -- верхняя граница структуры (выше этой границы нет данных)
+        newType[0] = vectorType;
+        newType[1] = MPI_UB;
 
-        MPI_Type_free(&col);          // Освобождение временного типа
+        // длины полей в структуре
+        fieldsLen[0] = 1;
+        fieldsLen[1] = 1;
 
+        // создание нового пользовательского типа данных structType, состоящего из 2-ух эл-тов
+        // это тип для передачи векторных данных между процессами
 
-        printf("Receive %s[%d] %d of %d\n", name, nlen, myrank, nprocs);
-        // Условие для определения, как именно получать данные
-        if (myrank % 4 == 1)
-            MPI_Recv(a, 100, MPI_INT, myrank - 1, 20, MPI_COMM_WORLD, &st);  // Получение данных в первом формате
-        else
-            MPI_Recv(a, 10, col1, myrank - 1, 20, MPI_COMM_WORLD, &st);       // Получение данных во втором формате
+        // 2 -- кол-во полей
+        // fieldsLen, address, newType -- соответствующие массивы
+        MPI_Type_create_struct(2, fieldsLen, address, newType, &structType);
 
-        MPI_Type_free(&col1);         // Освобождение производного типа данных
+        // делаем новый тип доступным для использования в операциях
+        MPI_Type_commit(&structType);
 
-        
-        for (int i = 0; i < 10; i++)
-        {
-            for (int j = 0; j < 10; j++)
-                printf("%6d", a[i][j]); 
-            printf("\n");               
+        // освобождаем память, занятую типом vectorType (т.к. он нам больше не нужен)
+        MPI_Type_free(&vectorType);
+
+        // получаем массив целых чисел от предыдущего процесса с использованием созданного типа structType
+        // это транспонированная матрица
+        MPI_Recv(matrix, 5, structType, myrank - 1, 10, MPI_COMM_WORLD, &st);
+        printf("procs[%d] received transposed matrix from procs[%d]\nHere it is:\n", myrank, myrank - 1);
+
+        // выводим полученный массив на экран
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                printf("%4d", matrix[i][j]);
+            }
+            printf("\n");
         }
+        printf("\n");
+
+        // освобождаем память, занятую типом structType
+        MPI_Type_free(&structType);
     }
 
-    MPI_Finalize();                   
-    return 0;                         
+    MPI_Finalize();
+    return 0;
 }

@@ -1,0 +1,52 @@
+Hello from processor node-1[6] 0 of 4
+Hello from processor node-2[6] 1 of 4
+Hello from processor node-3[6] 2 of 4
+Hello from processor node-4[6] 3 of 4
+[2] Time = 0.011867  Data=      800 KByte
+[2]  Bandwith[0] = 65.832292 MByte/sek
+[2] Time = 0.009753  Data=     1600 KByte
+[2]  Bandwith[1] = 160.215286 MByte/sek
+[2] Time = 0.010129  Data=     3200 KByte
+[2]  Bandwith[2] = 308.513026 MByte/sek
+[2] Time = 0.013369  Data=     6400 KByte
+[2]  Bandwith[3] = 467.500658 MByte/sek
+[2] Time = 0.021708  Data=    12800 KByte
+[2]  Bandwith[4] = 575.814984 MByte/sek
+[2] Time = 0.029044  Data=    25600 KByte
+[2]  Bandwith[5] = 860.772186 MByte/sek
+[2] Time = 0.050803  Data=    51200 KByte
+[2]  Bandwith[6] = 984.185383 MByte/sek
+[2] Time = 0.093861  Data=   102400 KByte
+[2]  Bandwith[7] = 1065.408423 MByte/sek
+[0] Time = 0.261001  Data=      800 KByte
+[0]  Bandwith[0] = 2.993285 MByte/sek
+[0] Time = 0.013624  Data=     1600 KByte
+[0]  Bandwith[1] = 114.691022 MByte/sek
+[0] Time = 0.014995  Data=     3200 KByte
+[0]  Bandwith[2] = 208.408595 MByte/sek
+[0] Time = 0.019424  Data=     6400 KByte
+[0]  Bandwith[3] = 321.767368 MByte/sek
+[0] Time = 0.030885  Data=    12800 KByte
+[0]  Bandwith[4] = 404.728925 MByte/sek
+[0] Time = 0.046342  Data=    25600 KByte
+[0]  Bandwith[5] = 539.468518 MByte/sek
+[0] Time = 0.069522  Data=    51200 KByte
+[0]  Bandwith[6] = 719.201532 MByte/sek
+[0] Time = 0.120459  Data=   102400 KByte
+[0]  Bandwith[7] = 830.161377 MByte/sek
+[0] Time = 0.230617  Data=   204800 KByte
+[0]  Bandwith[8] = 867.237285 MByte/sek
+[2] Time = 1.709175  Data=   204800 KByte
+[2]  Bandwith[8] = 117.015490 MByte/sek
+[0] Time = 1.545843  Data=   409600 KByte
+[0]  Bandwith[9] = 258.758561 MByte/sek
+[0] Time = 2.247516  Data=   819200 KByte
+[0]  Bandwith[10] = 355.948551 MByte/sek
+[2] Time = 3.126124  Data=   409600 KByte
+[2]  Bandwith[9] = 127.953986 MByte/sek
+[2] Time = 6.361517  Data=   819200 KByte
+[2]  Bandwith[10] = 125.756167 MByte/sek
+--------------
+--------------
+--------------
+--------------

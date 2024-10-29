@@ -1,0 +1,55 @@
+Hello from processor node-1[6] 0 of 5
+Hello from processor node-5[6] 4 of 5
+[4] Idle
+Hello from processor node-2[6] 1 of 5
+Hello from processor node-3[6] 2 of 5
+Hello from processor node-4[6] 3 of 5
+[2] Time = 0.009404  Data=      800 KByte
+[2]  Bandwith[0] = 83.076170 MByte/sek
+[0] Time = 0.013841  Data=      800 KByte
+[0]  Bandwith[0] = 56.444931 MByte/sek
+[2] Time = 0.008221  Data=     1600 KByte
+[2]  Bandwith[1] = 190.056967 MByte/sek
+[2] Time = 0.008715  Data=     3200 KByte
+[2]  Bandwith[2] = 358.566820 MByte/sek
+[0] Time = 0.014769  Data=     1600 KByte
+[0]  Bandwith[1] = 105.793742 MByte/sek
+[2] Time = 0.009144  Data=     6400 KByte
+[2]  Bandwith[3] = 683.533808 MByte/sek
+[0] Time = 0.018857  Data=     3200 KByte
+[0]  Bandwith[2] = 165.718060 MByte/sek
+[2] Time = 0.031381  Data=    12800 KByte
+[2]  Bandwith[4] = 398.333205 MByte/sek
+[0] Time = 0.024344  Data=     6400 KByte
+[0]  Bandwith[3] = 256.740456 MByte/sek
+[2] Time = 0.039115  Data=    25600 KByte
+[2]  Bandwith[5] = 639.135949 MByte/sek
+[0] Time = 0.060902  Data=    12800 KByte
+[0]  Bandwith[4] = 205.248194 MByte/sek
+[2] Time = 0.063814  Data=    51200 KByte
+[2]  Bandwith[6] = 783.522663 MByte/sek
+[0] Time = 0.096630  Data=    25600 KByte
+[0]  Bandwith[5] = 258.720065 MByte/sek
+[2] Time = 0.126449  Data=   102400 KByte
+[2]  Bandwith[7] = 790.834793 MByte/sek
+[2] Time = 0.562664  Data=   204800 KByte
+[2]  Bandwith[8] = 355.451712 MByte/sek
+[0] Time = 0.709440  Data=    51200 KByte
+[0]  Bandwith[6] = 70.478074 MByte/sek
+[2] Time = 1.208476  Data=   409600 KByte
+[2]  Bandwith[9] = 330.995466 MByte/sek
+[0] Time = 1.344947  Data=   102400 KByte
+[0]  Bandwith[7] = 74.352374 MByte/sek
+[2] Time = 1.961183  Data=   819200 KByte
+[2]  Bandwith[10] = 407.917123 MByte/sek
+[0] Time = 1.791267  Data=   204800 KByte
+[0]  Bandwith[8] = 111.652833 MByte/sek
+[0] Time = 2.170774  Data=   409600 KByte
+[0]  Bandwith[9] = 184.266063 MByte/sek
+[0] Time = 3.591572  Data=   819200 KByte
+[0]  Bandwith[10] = 222.743679 MByte/sek
+--------------
+--------------
+--------------
+--------------
+--------------

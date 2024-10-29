@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 #SBATCH --job-name="myHELLO"
 #SBATCH --partition=debug
 #SBATCH --nodes=10
