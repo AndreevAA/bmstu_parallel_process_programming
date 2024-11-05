@@ -2,95 +2,81 @@
 #include <stdlib.h>
 #include <mpi.h>
 
-// Размер буфера для передачи данных
 #define SIZE 1024
 
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
     int myrank, nprocs, len;
     char name[MPI_MAX_PROCESSOR_NAME];
-    int *buf; // Указатель на буфер для хранения данных
-    MPI_Status st; // Статус для операций MPI
+    int *buf;
+    MPI_Status st;
 
-    // Выделение памяти для буфера
     buf = (int *)malloc(sizeof(int) * (SIZE * 1024 + 100));
-
     MPI_Init(&argc, &argv);
-
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
     MPI_Get_processor_name(name, &len);
 
-    // Сообщение о запуске процесса
     printf("Hello from processor %s[%d] %d of %d\n", name, len, myrank, nprocs);
 
-    // Процессы с четными рангами
-    if (myrank % 2 == 0)
+    if ( myrank % 2 == 0 )
     {
-        // Проверка, что процесс не является последним
-        if (myrank < nprocs - 1)
+        if ( myrank < nprocs - 1 )
         {
-            int i, cl, sz = SIZE; // Индексы и переменная размера
-            double time; // Переменная для времени выполнения
+            int i, cl, sz = SIZE;
+            double time;
 
-            // Инициализация буфера данными
-            for (i = 0; i < SIZE * 1024; i++)
+            for ( i = 0; i < SIZE * 1024; i++ )
                 buf[i] = i + 10;
 
-            // Цикл для проведения многократных экспериментов
-            for (cl = 0; cl < 11; cl++)
+            for ( ; i < SIZE * 1024 + 100; i++ )
+                buf[i] = 0;
+
+            for ( cl = 0; cl < 11; cl++ )
             {
-                time = MPI_Wtime(); // Запись времени начала
-                for (i = 0; i < 100; i++)
+                time = MPI_Wtime();
+
+                for ( i = 0; i < 100; i++ )
                 {
-                    // Отправка данных процессу с рангом myrank + 1
-                    MPI_Send(buf, sz, MPI_INT, myrank + 1, 10, MPI_COMM_WORLD);
-                    // Получение данных от процесса с рангом myrank + 1
-                    MPI_Recv(buf, sz + 100, MPI_INT, myrank + 1, 20, MPI_COMM_WORLD, &st);
+                    MPI_Send( buf, sz, MPI_INT, myrank + 1, 10, MPI_COMM_WORLD );
+                    MPI_Recv( buf, sz + 100, MPI_INT, myrank + 1, 20, MPI_COMM_WORLD, &st );
                 }
-                time = MPI_Wtime() - time; // Вычисление времени выполнения
-                
-                // Печать времени и производительности
-                printf("[%d] Time = %lf  Data=%9.0f KByte\n",
-                       myrank,
-                       time,
-                       sz * sizeof(int) * 200.0 / 1024);
-                printf("[%d]  Bandwith[%d] = %lf MByte/sek\n",
-                       myrank,
-                       cl,
-                       sz * sizeof(int) * 200 / (time * 1024 * 1024));
-                sz *= 2; // Увеличение размера буфера для следующего цикла
+
+                time = MPI_Wtime() - time;
+                printf( "[%d] Time = %lf  Data = %9.0f KByte\n", myrank, time, sz * sizeof(int) * 200.0 / 1024 );
+                printf( "[%d] Bandwith[%d] = %lf MByte/sek\n", myrank, cl, sz * sizeof(int) * 200 / (time * 1024 * 1024) );
+                sz *= 2;
             }
         }
         else
-            // Если процесс не выполняет никаких действий, вывести сообщение
             printf("[%d] Idle\n", myrank);
     }
-    else // Процессы с нечетными рангами
+    else
     {
         int i, cl, sz = SIZE;
 
-        // Инициализация буфера данными
-        for(i = 0; i < SIZE * 1024; i++)
-            buf[i] = i + 100;
+        for ( i = 0; i < SIZE * 1024; i++ )
+            buf[i] = i * 10 + 5;
 
-        // Цикл для передачи данных
-        for (cl = 0; cl < 11; cl++)
+        for ( ; i < SIZE * 1024 + 100; i++ )
+            buf[i] = 0;
+
+        for ( cl = 0; cl < 11; cl++ )
         {
-            for (i = 0; i < 100; i++)
+            for ( i = 0; i < 100; i++ )
             {
-                // Отправка данных процессу с рангом myrank - 1
-                MPI_Send(buf, sz, MPI_INT, myrank - 1, 20, MPI_COMM_WORLD);
-                // Получение данных от процесса с рангом myrank - 1
-                MPI_Recv(buf, sz + 100, MPI_INT, myrank - 1, 10, MPI_COMM_WORLD, &st);
+                MPI_Send( buf, sz, MPI_INT, myrank - 1, 20, MPI_COMM_WORLD );
+                MPI_Recv( buf, sz + 100, MPI_INT, myrank - 1, 10, MPI_COMM_WORLD, &st );
+
+                if ( i > 97) 
+                {
+                    printf("[%2d] %5d    %5d    %5d\n", myrank, buf[0], buf[1], buf[2]);
+                }
             }
-            sz *= 2; // Увеличение размера буфера для следующего цикла
+            sz *= 2;
         }
     }
-    
-    // Завершение работы MPI
-    MPI_Finalize();
-    printf("--------------\n");
 
+    MPI_Finalize();
     return 0;
 }
