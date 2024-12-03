@@ -8,7 +8,7 @@
 
 # mpirun -np 4 a.out input.txt
 
-mpiexec -n 1 a.out input.txt
+# mpiexec -n 1 a.out input.txt
 mpiexec -n 2 a.out input.txt
 mpiexec -n 3 a.out input.txt
 mpiexec -n 4 a.out input.txt
